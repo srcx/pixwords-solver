@@ -1,5 +1,8 @@
 package cz.srnet.pixwordssolver;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,8 +21,9 @@ public class Solver {
 		}
 		return solve("", pattern, lettersAsList);
 	}
-	
-	private Collection<String> solve(String prefix, String pattern, Collection<Character> letters) {
+
+	private Collection<String> solve(String prefix, String pattern,
+			Collection<Character> letters) {
 		if (pattern.isEmpty()) {
 			return Collections.singleton(prefix);
 		}
@@ -39,14 +43,34 @@ public class Solver {
 		return ret;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String pattern = args[0];
 		String letters = args[1];
+		WordList wordList = null;
+		if (args.length > 2) {
+			String wordListsDir = args[2];
+			Path wordListsDirPath = FileSystems.getDefault().getPath(
+					wordListsDir);
+			System.out.println("Loading word list from " + wordListsDirPath);
+			wordList = new WordList(wordListsDirPath);
+			System.out.println("... loaded");
+		}
+
+		System.out.println("Generating possibilities...");
 		Collection<String> possibilities = new Solver().solve(pattern, letters);
+		System.out.println("... generated");
+
+		System.out.println("Possibilities:");
 		System.out.println(possibilities.size());
-		for (String possibility : possibilities) {
-			System.out.println(possibility);
+		possibilities.forEach(possibility -> System.out.println(possibility));
+		System.out.println();
+
+		if (wordList != null) {
+			System.out.println("Possible words: ");
+			final WordList wordList_f = wordList;
+			possibilities.stream()
+					.filter(possibility -> wordList_f.isListed(possibility))
+					.forEach(word -> System.out.println(word));
 		}
 	}
-	
 }
