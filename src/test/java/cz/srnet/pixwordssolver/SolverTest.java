@@ -6,77 +6,88 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
 import org.junit.Test;
 
 public class SolverTest {
 
-	@Before
-	public void prepare() {
-		solver = new Solver();
-	}
-	
-	Solver solver;
-	
 	@Test
 	public void test1() {
-		Collection<String> result = solver.solve("", "");
+		Solver solver = new Solver("", "");
+		assertEquals(1, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem(""));
 	}
 
 	@Test
 	public void test2() {
-		Collection<String> result = solver.solve("a", "");
+		Solver solver = new Solver("a", "");
+		assertEquals(1, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem("a"));
 	}
 
 	@Test
 	public void test3() {
-		Collection<String> result = solver.solve("?", "a");
+		Solver solver = new Solver("?", "a");
+		assertEquals(1, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem("a"));
 	}
 
 	@Test
 	public void test4() {
-		Collection<String> result = solver.solve("a?", "ab");
+		Solver solver = new Solver("a?", "ab");
+		assertEquals(2, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(2, result.size());
 		assertThat(result, CoreMatchers.hasItems("aa", "ab"));
 	}
 
 	@Test
 	public void test5() {
-		Collection<String> result = solver.solve("a", "ab");
+		Solver solver = new Solver("a", "ab");
+		assertEquals(1, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem("a"));
 	}
 
 	@Test
 	public void test6() {
-		Collection<String> result = solver.solve("a?b?", "cde");
+		Solver solver = new Solver("a?b?", "cde");
+		assertEquals(6, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(6, result.size());
-		assertThat(result, CoreMatchers.hasItems("acbd", "acbe", "adbc", "adbe", "aebc", "aebd" ));
+		assertThat(result, CoreMatchers.hasItems("acbd", "acbe", "adbc",
+				"adbe", "aebc", "aebd"));
 	}
 
 	@Test
 	public void test7() {
-		Collection<String> result = solver.solve("a?", "bb");
+		Solver solver = new Solver("a?", "bb");
+		assertEquals(2, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem("ab"));
 	}
 
 	@Test
 	public void test8() {
-		Collection<String> result = solver.solve("a?b?", "cc");
+		Solver solver = new Solver("a?b?", "cc");
+		assertEquals(2, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(1, result.size());
 		assertThat(result, CoreMatchers.hasItem("acbc"));
 	}
 
 	@Test
 	public void test9() {
-		Collection<String> result = solver.solve("a?b?", "ccd");
+		Solver solver = new Solver("a?b?", "ccd");
+		assertEquals(6, solver.getEstimatedPossibilities());
+		Collection<String> result = solver.solve();
 		assertEquals(3, result.size());
 		assertThat(result, CoreMatchers.hasItems("acbc", "acbd", "adbc"));
 	}

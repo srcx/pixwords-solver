@@ -12,7 +12,35 @@ import java.util.Set;
 
 public class Solver {
 
-	public Collection<String> solve(String pattern, String letters) {
+	public Solver(String pattern, String letters) {
+		this.pattern = pattern;
+		this.letters = letters;
+		this.estimatedPossibilities = estimatePossibilities();
+	}
+
+	private final String pattern;
+	private final String letters;
+	private final int estimatedPossibilities;
+
+	public int getEstimatedPossibilities() {
+		return estimatedPossibilities;
+	}
+
+	private int estimatePossibilities() {
+		int unknown = 0;
+		for (int i = 0; i < pattern.length(); i++) {
+			if (pattern.charAt(i) == '?') {
+				unknown++;
+			}
+		}
+		int estimate = 1;
+		for (int n = letters.length(); n > letters.length() - unknown; n--) {
+			estimate *= n;
+		}
+		return estimate;
+	}
+
+	public Collection<String> solve() {
 		List<Character> lettersAsList = new ArrayList<>();
 		if (!letters.isEmpty()) {
 			for (String letter : letters.split("")) {
@@ -22,7 +50,7 @@ public class Solver {
 		return solve("", pattern, lettersAsList);
 	}
 
-	private Collection<String> solve(String prefix, String pattern,
+	private static Collection<String> solve(String prefix, String pattern,
 			Collection<Character> letters) {
 		if (pattern.isEmpty()) {
 			return Collections.singleton(prefix);
@@ -57,7 +85,10 @@ public class Solver {
 		}
 
 		System.out.println("Generating possibilities...");
-		Collection<String> possibilities = new Solver().solve(pattern, letters);
+		Solver solver = new Solver(pattern, letters);
+		System.out.println("... " + solver.getEstimatedPossibilities()
+				+ " estimated possibilities");
+		Collection<String> possibilities = solver.solve();
 		System.out.println("... generated");
 
 		System.out.println("Possibilities:");
