@@ -69,7 +69,7 @@ public class Solver {
 			Set<Character> lettersAsSet = new LinkedHashSet<>(letters);
 			for (char letter : lettersAsSet) {
 				List<Character> restOfLetters = new ArrayList<>(letters);
-				restOfLetters.remove(new Character(letter));
+				restOfLetters.remove(Character.valueOf(letter));
 				ret += solve(callback, prefix + letter, restOfPattern,
 						restOfLetters);
 			}
