@@ -5,10 +5,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class Solver {
 
@@ -41,21 +41,28 @@ public class Solver {
 	}
 
 	public Collection<String> solve() {
+		Collection<String> ret = new ArrayList<String>();
+		solve(possibility -> ret.add(possibility));
+		return ret;
+	}
+
+	public long solve(Consumer<String> callback) {
 		List<Character> lettersAsList = new ArrayList<>();
 		if (!letters.isEmpty()) {
 			for (String letter : letters.split("")) {
 				lettersAsList.add(letter.charAt(0));
 			}
 		}
-		return solve("", pattern, lettersAsList);
+		return solve(callback, "", pattern, lettersAsList);
 	}
 
-	private static Collection<String> solve(String prefix, String pattern,
-			Collection<Character> letters) {
+	private static long solve(Consumer<String> callback, String prefix,
+			String pattern, Collection<Character> letters) {
 		if (pattern.isEmpty()) {
-			return Collections.singleton(prefix);
+			callback.accept(prefix);
+			return 1;
 		}
-		Collection<String> ret = new ArrayList<>();
+		long ret = 0;
 		char c = pattern.charAt(0);
 		String restOfPattern = pattern.substring(1);
 		if (c == '?') {
@@ -63,10 +70,11 @@ public class Solver {
 			for (char letter : lettersAsSet) {
 				List<Character> restOfLetters = new ArrayList<>(letters);
 				restOfLetters.remove(new Character(letter));
-				ret.addAll(solve(prefix + letter, restOfPattern, restOfLetters));
+				ret += solve(callback, prefix + letter, restOfPattern,
+						restOfLetters);
 			}
 		} else {
-			ret.addAll(solve(prefix + c, restOfPattern, letters));
+			ret += solve(callback, prefix + c, restOfPattern, letters);
 		}
 		return ret;
 	}
@@ -88,20 +96,21 @@ public class Solver {
 		Solver solver = new Solver(pattern, letters);
 		System.out.println("... " + solver.getEstimatedPossibilities()
 				+ " estimated possibilities");
-		Collection<String> possibilities = solver.solve();
-		System.out.println("... generated");
-
-		System.out.println("Possibilities:");
-		System.out.println(possibilities.size());
-		possibilities.forEach(possibility -> System.out.println(possibility));
-		System.out.println();
+		List<String> possibleWords = new ArrayList<String>();
+		final WordList wordList_f = wordList;
+		long generated = solver.solve(possibility -> {
+			System.out.print(possibility);
+			if (wordList_f != null && wordList_f.isListed(possibility)) {
+				possibleWords.add(possibility);
+				System.out.print(" [*]");
+			}
+			System.out.println();
+		});
+		System.out.println("... " + generated + " generated possibilities");
 
 		if (wordList != null) {
 			System.out.println("Possible words: ");
-			final WordList wordList_f = wordList;
-			possibilities.stream()
-					.filter(possibility -> wordList_f.isListed(possibility))
-					.forEach(word -> System.out.println(word));
+			possibleWords.stream().forEach(word -> System.out.println(word));
 		}
 	}
 }
