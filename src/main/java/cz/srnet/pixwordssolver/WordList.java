@@ -18,14 +18,18 @@ public class WordList {
 	private final Set<String> words = new HashSet<>();
 
 	private void loadWords(Set<String> words, Path dir) throws IOException {
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir,
-				file -> Files.isRegularFile(file))) {
-			stream.forEach(file -> loadWordsFromFile(words, file));
-		} catch (RuntimeException e) {
-			if (e.getCause() instanceof IOException) {
-				throw (IOException) e.getCause();
+		if (Files.isDirectory(dir)) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir,
+					file -> Files.isRegularFile(file))) {
+				stream.forEach(file -> loadWordsFromFile(words, file));
+			} catch (RuntimeException e) {
+				if (e.getCause() instanceof IOException) {
+					throw (IOException) e.getCause();
+				}
+				throw e;
 			}
-			throw e;
+		} else {
+			loadWordsFromFile(words, dir);
 		}
 	}
 
