@@ -37,7 +37,8 @@ public class WordList {
 		// System.out.println("file=" + file);
 		try (Stream<String> lines = Files.lines(file,
 				StandardCharsets.ISO_8859_1)) {
-			lines.map(line -> line.trim()).forEach(word -> words.add(word));
+			lines.map(line -> line.trim().toLowerCase()).forEach(
+					word -> words.add(word));
 		} catch (IOException e) {
 			// Eclipse refuses to compile this with throws IOException
 			throw new RuntimeException(e);
