@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+@NonNullByDefault
 public class Solver {
 
 	private static final int POSSIBILITIES_LIMIT = 1000;
@@ -57,28 +60,26 @@ public class Solver {
 		List<Character> lettersAsList = new ArrayList<>();
 		if (!letters.isEmpty()) {
 			for (String letter : letters.split("")) {
-				lettersAsList.add(letter.charAt(0));
+				lettersAsList.add(Utils.notNull(letter.charAt(0)));
 			}
 		}
 		return lettersAsList;
 	}
 
-	private static long solve(Consumer<String> callback, String prefix,
-			String pattern, Collection<Character> letters) {
+	private static long solve(Consumer<String> callback, String prefix, String pattern, Collection<Character> letters) {
 		if (pattern.isEmpty()) {
 			callback.accept(prefix);
 			return 1;
 		}
 		long ret = 0;
 		char c = pattern.charAt(0);
-		String restOfPattern = pattern.substring(1);
+		String restOfPattern = Utils.notNull(pattern.substring(1));
 		if (c == '?') {
 			Set<Character> lettersAsSet = new LinkedHashSet<>(letters);
 			for (char letter : lettersAsSet) {
 				List<Character> restOfLetters = new ArrayList<>(letters);
 				restOfLetters.remove(Character.valueOf(letter));
-				ret += solve(callback, prefix + letter, restOfPattern,
-						restOfLetters);
+				ret += solve(callback, prefix + letter, restOfPattern, restOfLetters);
 			}
 		} else {
 			ret += solve(callback, prefix + c, restOfPattern, letters);
@@ -106,13 +107,12 @@ public class Solver {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String pattern = args[0];
-		String letters = args[1];
+		String pattern = Utils.notNull(args[0]);
+		String letters = Utils.notNull(args[1]);
 		WordList wordList = null;
 		if (args.length > 2) {
 			String wordListsDir = args[2];
-			Path wordListsDirPath = FileSystems.getDefault().getPath(
-					wordListsDir);
+			Path wordListsDirPath = Utils.notNull(FileSystems.getDefault().getPath(wordListsDir));
 			System.out.println("Loading word list from " + wordListsDirPath);
 			wordList = new WordList(wordListsDirPath);
 			System.out.println("... loaded");
@@ -120,8 +120,7 @@ public class Solver {
 
 		System.out.println("Generating possibilities...");
 		Solver solver = new Solver(pattern, letters);
-		System.out.println("... " + solver.getEstimatedPossibilities()
-				+ " estimated possibilities");
+		System.out.println("... " + solver.getEstimatedPossibilities() + " estimated possibilities");
 		if (wordList == null || solver.getEstimatedPossibilities() < POSSIBILITIES_LIMIT) {
 			System.out.println("... generating all of them");
 			List<String> possibleWords = new ArrayList<String>();
@@ -138,15 +137,12 @@ public class Solver {
 
 			if (wordList != null) {
 				System.out.println("Possible words: ");
-				possibleWords.stream()
-						.forEach(word -> System.out.println(word));
+				possibleWords.stream().forEach(word -> System.out.println(word));
 			}
 		} else {
-			System.out
-					.println("... too many possibilities - using word list directly");
+			System.out.println("... too many possibilities - using word list directly");
 			System.out.println("Possible words: ");
-			wordList.list(pattern).filter(word -> solver.matches(word))
-					.forEach(word -> System.out.println(word));
+			wordList.list(pattern).filter(word -> solver.matches(word)).forEach(word -> System.out.println(word));
 		}
 	}
 }

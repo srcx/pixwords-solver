@@ -7,9 +7,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
+@NonNullByDefault
 public class SolverTest {
 
 	@Test
@@ -93,8 +95,7 @@ public class SolverTest {
 		assertEquals(6, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
 		assertEquals(6, result.size());
-		assertThat(result, CoreMatchers.hasItems("acbd", "acbe", "adbc",
-				"adbe", "aebc", "aebd"));
+		assertThat(result, CoreMatchers.hasItems("acbd", "acbe", "adbc", "adbe", "aebc", "aebd"));
 	}
 
 	@Test
