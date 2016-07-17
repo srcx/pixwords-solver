@@ -7,15 +7,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class WordList {
 
 	public WordList(Path dir) throws IOException {
+		words = new HashSet<>();
 		loadWords(words, dir);
 	}
 
-	private final Set<String> words = new HashSet<>();
+	WordList(Set<String> words) {
+		this.words = words;
+	}
+
+	private final Set<String> words;
 
 	private void loadWords(Set<String> words, Path dir) throws IOException {
 		if (Files.isDirectory(dir)) {
@@ -49,4 +55,9 @@ public class WordList {
 		return words.contains(word);
 	}
 
+	public Stream<String> list(String pattern) {
+		Pattern regex = Pattern.compile(pattern.replace('?', '.'),
+				Pattern.CASE_INSENSITIVE);
+		return words.stream().filter(word -> regex.matcher(word).matches());
+	}
 }

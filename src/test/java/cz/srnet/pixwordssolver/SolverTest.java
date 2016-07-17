@@ -1,7 +1,9 @@
 package cz.srnet.pixwordssolver;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
@@ -11,7 +13,7 @@ import org.junit.Test;
 public class SolverTest {
 
 	@Test
-	public void test1() {
+	public void testSolve1() {
 		Solver solver = new Solver("", "");
 		assertEquals(1, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -20,7 +22,13 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test2() {
+	public void testMatches1() {
+		Solver solver = new Solver("", "");
+		assertTrue(solver.matches(""));
+	}
+
+	@Test
+	public void testSolve2() {
 		Solver solver = new Solver("a", "");
 		assertEquals(1, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -29,7 +37,15 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test3() {
+	public void testMatches2() {
+		Solver solver = new Solver("a", "");
+		assertTrue(solver.matches("a"));
+		assertFalse(solver.matches("A"));
+		assertFalse(solver.matches("z"));
+	}
+
+	@Test
+	public void testSolve3() {
 		Solver solver = new Solver("?", "a");
 		assertEquals(1, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -38,7 +54,15 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test4() {
+	public void testMatches3() {
+		Solver solver = new Solver("?", "a");
+		assertTrue(solver.matches("a"));
+		assertFalse(solver.matches("A"));
+		assertFalse(solver.matches("z"));
+	}
+
+	@Test
+	public void testSolve4() {
 		Solver solver = new Solver("a?", "ab");
 		assertEquals(2, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -47,7 +71,15 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test5() {
+	public void testMatches4() {
+		Solver solver = new Solver("a?", "ab");
+		assertTrue(solver.matches("aa"));
+		assertTrue(solver.matches("ab"));
+		assertFalse(solver.matches("az"));
+	}
+
+	@Test
+	public void testSolve5() {
 		Solver solver = new Solver("a", "ab");
 		assertEquals(1, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -56,7 +88,7 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test6() {
+	public void testSolve6() {
 		Solver solver = new Solver("a?b?", "cde");
 		assertEquals(6, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -66,7 +98,20 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test7() {
+	public void testMatches6() {
+		Solver solver = new Solver("a?b?", "cde");
+		assertTrue(solver.matches("acbd"));
+		assertTrue(solver.matches("acbe"));
+		assertTrue(solver.matches("adbc"));
+		assertTrue(solver.matches("adbe"));
+		assertTrue(solver.matches("aebc"));
+		assertTrue(solver.matches("aebd"));
+		assertFalse(solver.matches("acbc"));
+		assertFalse(solver.matches("zzzz"));
+	}
+
+	@Test
+	public void testSolve7() {
 		Solver solver = new Solver("a?", "bb");
 		assertEquals(2, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -75,7 +120,7 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test8() {
+	public void testSolve8() {
 		Solver solver = new Solver("a?b?", "cc");
 		assertEquals(2, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
@@ -84,7 +129,7 @@ public class SolverTest {
 	}
 
 	@Test
-	public void test9() {
+	public void testSolve9() {
 		Solver solver = new Solver("a?b?", "ccd");
 		assertEquals(6, solver.getEstimatedPossibilities());
 		Collection<String> result = solver.solve();
