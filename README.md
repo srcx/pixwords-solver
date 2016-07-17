@@ -10,3 +10,5 @@ Suggested word lists compilations are:
 
 * [SCOWL (And Friends)](http://wordlist.aspell.net/) - pass directory `final` as the argument to the solver;
 * [Free German Dictionary](https://sourceforge.net/projects/germandict/) - pass file `german.dic` as the argument to the solver.
+
+[![Build Status](https://travis-ci.org/srcx/pixwords-solver.svg?branch=master)](https://travis-ci.org/srcx/pixwords-solver)
